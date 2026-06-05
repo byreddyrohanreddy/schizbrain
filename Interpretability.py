@@ -536,7 +536,7 @@ class SchizoBrainInterpreter:
         model: nn.Module,
         gradcam_weight: float = 0.6,
         attn_weight: float = 0.4,
-        temperature: float = 0.18,
+        temperature: float = 0.30,
     ):
         self.model = model
         self.gradcam_weight = gradcam_weight
