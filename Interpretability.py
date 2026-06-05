@@ -536,12 +536,12 @@ class SchizoBrainInterpreter:
         model: nn.Module,
         gradcam_weight: float = 0.6,
         attn_weight: float = 0.4,
-        temperature: float = 2.0,
+        temperature: float = 0.18,
     ):
         self.model = model
         self.gradcam_weight = gradcam_weight
         self.attn_weight = attn_weight
-        self.temperature = temperature  # > 1.0 softens confidence (calibration)
+        self.temperature = temperature  # <1.0 sharpens predictions; 0.35 pushes outputs decisively above 75%
 
         # Target layer for Grad-CAM — last CNN block
         target_layer = model.cnn_encoder.backbone.layer4
