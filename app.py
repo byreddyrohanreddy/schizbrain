@@ -91,7 +91,7 @@ async def load_model():
 
     # 1. Init Model
     model = SchizoBrain(
-        num_layers=6,        # V4: upgraded from 4
+        num_layers=4,        # Changed from 6 to match checkpoint training
         num_heads=4,
         embed_dim=256,
         mlp_ratio=2,
