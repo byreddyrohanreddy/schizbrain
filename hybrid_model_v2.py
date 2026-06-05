@@ -652,7 +652,7 @@ class SchizoBrain(nn.Module):
         # 🧩 Patch Embedding + Positional Encoding 🧩
         self.patch_embedding = PatchEmbedding3D(
             in_channels=512,
-            patch_size=2,
+            patch_size=4,  # Changed from 2 to match checkpoint training
             embed_dim=embed_dim,
             spatial_size=12,
         )
