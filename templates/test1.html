@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SchizoBrain — Analysis Results</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface2: #f1f5f9;
+            --border: #e2e8f0;
+            --border-subtle: #f1f5f9;
+            --accent: #0ea5e9;
+            --accent2: #0284c7;
+            --accent-light: #e0f2fe;
+            --accent-glow: rgba(14, 165, 233, 0.12);
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-glow: 0 0 20px rgba(14, 165, 233, 0.15);
+            --font-head: 'Syne', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-head);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(14, 165, 233, 0.06) 1px, transparent 0);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vh;
+            background: radial-gradient(ellipse, rgba(14, 165, 233, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 60px;
+        }
+
+        /* ── NAV ── */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 28px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md), 0 0 0 4px var(--accent-light);
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            animation: pulse-ring 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+
+            0%,
+            100% {
+                transform: scale(0.7);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 10px 16px;
+            border-radius: 10px;
+            transition: all 0.2s;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .back-btn:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: var(--accent-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        /* ── PAGE HEADER ── */
+        .page-header {
+            margin-bottom: 32px;
+            animation: fade-up 0.5s ease both;
+        }
+
+        .page-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            background: var(--accent-light);
+            padding: 6px 12px;
+            border-radius: 20px;
+            width: fit-content;
+        }
+
+        .page-label::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .page-subtitle {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ── LOADING STATE ── */
+        #loadingState {
+            text-align: center;
+            padding: 100px 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .loader {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 36px;
+            position: relative;
+        }
+
+        .loader-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 3px solid transparent;
+        }
+
+        .loader-ring:nth-child(1) {
+            border-top-color: var(--accent);
+            animation: spin 1.2s linear infinite;
+        }
+
+        .loader-ring:nth-child(2) {
+            inset: 10px;
+            border-right-color: var(--accent2);
+            animation: spin 1.8s linear infinite reverse;
+        }
+
+        .loader-ring:nth-child(3) {
+            inset: 22px;
+            border-bottom-color: rgba(14, 165, 233, 0.3);
+            animation: spin 2.4s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-label {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .loader-step {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent);
+            min-height: 20px;
+            font-weight: 500;
+        }
+
+        /* ── RESULTS STATE ── */
+        #resultsState {
+            display: none;
+        }
+
+        /* ── SIDE-BY-SIDE ROW ── */
+        .viz-pred-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+            animation: fade-up 0.5s 0.1s ease both;
+        }
+
+        @media (max-width: 900px) {
+            .viz-pred-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .viz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .viz-card-header {
+            padding: 28px 28px 16px;
+        }
+
+        .viz-card-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: black;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .viz-card-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .viz-card-desc {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .viz-card-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 28px 28px;
+        }
+
+        .viz-card-body img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+        .viz-card-body .no-image {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 40px;
+            background: var(--surface2);
+            border-radius: 16px;
+            width: 100%;
+        }
+
+        /* ── DUAL CLASS BARS ── */
+        .conf-dual {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .conf-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 50px;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .conf-row-label {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .conf-row-bar-track {
+            height: 8px;
+            background: var(--surface2);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .conf-row-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .conf-row-bar-fill.red {
+            background: linear-gradient(90deg, #f87171, #ef4444);
+        }
+
+        .conf-row-bar-fill.blue {
+            background: linear-gradient(90deg, #38bdf8, var(--accent));
+        }
+
+        .conf-row-pct {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* ── REGION ANALYSIS ── */
+        .region-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            animation: fade-up 0.5s 0.2s ease both;
+            box-shadow: var(--shadow-md);
+        }
+
+        .region-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: black;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .region-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .region-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .region-row {
+            display: grid;
+            grid-template-columns: 180px 1fr 60px;
+            align-items: center;
+            gap: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .region-row {
+                grid-template-columns: 120px 1fr 50px;
+            }
+        }
+
+        .region-name {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .region-bar-track {
+            height: 8px;
+            background: var(--surface2);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .region-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #7dd3fc, var(--accent));
+            width: 0%;
+            transition: width 1.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .region-pct {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-align: right;
+            font-weight: 600;
+        }
+
+        /* ── DISCLAIMER ── */
+        .disclaimer {
+            background: var(--warning-light);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            animation: fade-up 0.5s 0.3s ease both;
+        }
+
+        .disclaimer svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--warning);
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .disclaimer p {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #92400e;
+            line-height: 1.7;
+        }
+
+        .disclaimer strong {
+            color: #78350f;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fade-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header {
+            animation: fade-up 0.5s ease both;
+        }
+
+        /* ── NEW SCAN BTN ── */
+        .new-scan-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 24px;
+            text-decoration: none;
+            animation: fade-up 0.5s 0.4s ease both;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .new-scan-btn:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .new-scan-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        /* ── PDF DOWNLOAD BTN ── */
+        .pdf-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 24px;
+            text-decoration: none;
+            animation: fade-up 0.5s 0.45s ease both;
+            font-weight: 600;
+            box-shadow: 0 4px 14px rgba(14,165,233,0.35);
+            letter-spacing: 0.01em;
+        }
+
+        .pdf-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14,165,233,0.45);
+            filter: brightness(1.08);
+        }
+
+        .pdf-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2.2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 48px 24px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.03em;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+    <base target="_blank">
+</head>
+
+<body>
+
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-icon"></div>
+            SchizoBrain
+        </a>
+        <a href="/" class="back-btn">
+            <svg viewBox="0 0 24 24">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+            New Scan
+        </a>
+    </nav>
+
+    <div class="container">
+
+        <div class="page-header">
+            <div class="page-label">Analysis Complete</div>
+            <div class="page-title">Classification Results</div>
+            <div class="page-subtitle" id="scanFilename"
+                style="font-family:var(--font-mono);font-size:0.85rem;color:var(--text-muted);">{{ filename }} ·
+                Processed via CNN + 3D ViT</div>
+        </div>
+
+        <!-- LOADING -->
+        <div id="loadingState">
+            <div class="loader">
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+            </div>
+            <div class="loader-label">Running inference on brain volume...</div>
+            <div class="loader-step" id="loaderStep">Preprocessing MRI scan</div>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="resultsState">
+
+            <!-- SIDE-BY-SIDE: PREDICTION & GRAD-CAM -->
+            <div class="viz-pred-row">
+                <!-- LEFT: Prediction Summary -->
+                <div class="viz-card">
+                    <div class="viz-card-header">
+                        <div class="viz-card-title">Prediction Summary</div>
+                        <p class="viz-card-desc">
+                            A simple result showing which condition is more likely, along with how confident the system
+                            is in that result.
+                        </p>
+                    </div>
+                    <div class="viz-card-body" style="flex-direction: column; gap: 24px; padding: 0 28px 28px;">
+                        <!-- Verdict badge -->
+                        <div id="predBadge"
+                            style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 24px; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; width: fit-content; margin: 0 auto;">
+                            <span id="predDot"
+                                style="width: 8px; height: 8px; border-radius: 50%; animation: blink 1.5s ease-in-out infinite;"></span>
+                            <span id="predBadgeText">{{ verdict_badge }}</span>
+                        </div>
+
+                        <!-- Main result text -->
+                        <div id="predResultText"
+                            style="font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; text-align: center;">
+                            {{ verdict_title }}
+                        </div>
+
+                        <!-- Confidence score big -->
+                        <div style="text-align: center;">
+                            <div id="predBigScore"
+                                style="font-size: 3.5rem; font-weight: 800; line-height: 1; letter-spacing: -0.03em;">{{
+                                confidence }}%</div>
+                            <div
+                                style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 8px; font-weight: 500;">
+                                Confidence</div>
+                        </div>
+
+                        <!-- Dual class bars -->
+                        <div class="conf-dual" style="margin-top: 12px; width: 100%;">
+                            <div class="conf-row">
+                                <div class="conf-row-label">Schizophrenia</div>
+                                <div class="conf-row-bar-track">
+                                    <div class="conf-row-bar-fill red" id="barSZ"></div>
+                                </div>
+                                <div class="conf-row-pct" style="color:var(--danger)">{{ sz_conf }}%</div>
+                            </div>
+                            <div class="conf-row">
+                                <div class="conf-row-label">Healthy Control</div>
+                                <div class="conf-row-bar-track">
+                                    <div class="conf-row-bar-fill blue" id="barHC"></div>
+                                </div>
+                                <div class="conf-row-pct" style="color:var(--accent)">{{ hc_conf }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Grad-CAM++ Visualization -->
+                <div class="viz-card">
+                    <div class="viz-card-header">
+                        <div class="viz-card-title">Grad-CAM++ & Attention</div>
+                        <p class="viz-card-desc">
+                            Images from different angles with highlighted areas showing which parts of the scan most
+                            influenced the result.
+                        </p>
+                    </div>
+                    <div class="viz-card-body">
+                        {% if gradcam_image %}
+                        <img src="{{ gradcam_image }}" alt="Grad-CAM Image" />
+                        {% else %}
+                        <div class="no-image">No Grad-CAM visualization available for this scan.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- REGION ANALYSIS -->
+            <div class="region-card">
+                <div class="region-title">ViT Attention Region Activation</div>
+                <div class="region-list">
+                    {% for region in regions %}
+                    <div class="region-row">
+                        <div class="region-name">{{ region.name }}</div>
+                        <div class="region-bar-track">
+                            <div class="region-bar-fill" data-pct="{{ region.weight }}"></div>
+                        </div>
+                        <div class="region-pct">{{ region.weight }}%</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- DISCLAIMER -->
+            <div class="disclaimer">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                <p>This is <strong>not a clinical
+                        diagnosis</strong>. This tool is intended for research purposes only </p>
+            </div>
+
+            <!-- ACTION ROW: Download PDF + New Scan -->
+            <div class="action-row">
+                <a href="/download-pdf/{{ result_id }}" class="pdf-btn" target="_blank" id="downloadPdfBtn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Download PDF Report
+                </a>
+            </div>
+
+        </div><!-- /resultsState -->
+
+    </div><!-- /container -->
+    <footer>
+        SchizoBrain
+    </footer>
+    <script>
+        // ── Simulated loading sequence ──
+        const steps = [
+            'Preprocessing MRI volume...',
+            'Skull stripping & MNI152 registration...',
+            'Running CNN feature extraction...',
+            '3D ViT attention pass...',
+            'Generating Grad-CAM activation maps...',
+            'Compiling classification result...'
+        ];
+
+        const loaderStep = document.getElementById('loaderStep');
+        let si = 0;
+
+        const stepInterval = setInterval(() => {
+            si++;
+            if (si < steps.length) {
+                loaderStep.style.opacity = 0;
+                setTimeout(() => {
+                    loaderStep.textContent = steps[si];
+                    loaderStep.style.transition = 'opacity 0.4s';
+                    loaderStep.style.opacity = 1;
+                }, 200);
+            } else {
+                clearInterval(stepInterval);
+                showResults();
+            }
+        }, 800);
+
+        function showResults() {
+            document.getElementById('loadingState').style.display = 'none';
+            const rs = document.getElementById('resultsState');
+            rs.style.display = 'block';
+
+            // Actual injected confidences
+            const szConf = parseFloat("{{ sz_conf }}");
+            const hcConf = parseFloat("{{ hc_conf }}");
+            const mainConf = parseFloat("{{ confidence_float }}");
+            const verdictClass = "{{ verdict_class }}".trim();
+
+            // Style prediction card based on verdict
+            const predBadge = document.getElementById('predBadge');
+            const predDot = document.getElementById('predDot');
+            const predResultText = document.getElementById('predResultText');
+            const predBigScore = document.getElementById('predBigScore');
+
+            if (verdictClass === 'schizophrenia') {
+                predBadge.style.background = 'var(--danger-light)';
+                predBadge.style.border = '1px solid rgba(239,68,68,0.2)';
+                predBadge.style.color = 'var(--danger)';
+                predDot.style.background = 'var(--danger)';
+                predResultText.style.color = '#dc2626';
+                predBigScore.style.color = 'var(--danger)';
+            } else {
+                predBadge.style.background = 'var(--success-light)';
+                predBadge.style.border = '1px solid rgba(16,185,129,0.2)';
+                predBadge.style.color = 'var(--success)';
+                predDot.style.background = 'var(--success)';
+                predResultText.style.color = '#059669';
+                predBigScore.style.color = 'var(--success)';
+            }
+
+            // Animate region bars
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    document.querySelectorAll('.region-bar-fill').forEach(bar => {
+                        bar.style.width = bar.dataset.pct + '%';
+                    });
+                }, 100);
+            });
+
+            // Animate dual class bars
+            setTimeout(() => {
+                const barSZ = document.getElementById('barSZ');
+                const barHC = document.getElementById('barHC');
+                if (barSZ) barSZ.style.width = szConf + '%';
+                if (barHC) barHC.style.width = hcConf + '%';
+            }, 200);
+        }
+    </script>
+</body>
+
+</html>

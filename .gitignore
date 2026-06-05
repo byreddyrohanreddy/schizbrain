@@ -1,0 +1,8 @@
+wandb/
+__pycache__/
+*.pyc
+*.pyo
+.env
+experiments/checkpoints/*.pth
+static/temp_*
+static/gradcam_*

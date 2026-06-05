@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SchizoBrain— Schizophrenia Detection</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            /* Light Clinical Palette */
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-elevated: #ffffff;
+            --border: #e2e8f0;
+            --border-subtle: #f1f5f9;
+            --accent: #0ea5e9;
+            --accent2: #0284c7;
+            --accent-light: #e0f2fe;
+            --accent-glow: rgba(14, 165, 233, 0.12);
+            --danger: #ef4444;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --text-light: #94a3b8;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-glow: 0 0 20px rgba(14, 165, 233, 0.15);
+            --font-head: 'Syne', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-head);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Subtle geometric background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(14, 165, 233, 0.08) 1px, transparent 0);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Soft gradient orb top-right */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vh;
+            background: radial-gradient(ellipse, rgba(14, 165, 233, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ── NAV ── */
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 28px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md), 0 0 0 4px var(--accent-light);
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            animation: pulse-ring 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+
+            0%,
+            100% {
+                transform: scale(0.7);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+        }
+
+        .nav-tag {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+
+        .hero-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            background: var(--accent-light);
+            padding: 8px 16px;
+            border-radius: 30px;
+        }
+
+        .hero-label::before,
+        .hero-label::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 1.5px;
+            background: var(--accent);
+            opacity: 0.4;
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 6vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin: 0 auto 48px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        /* ── STATS ROW ── */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 56px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat {
+            padding: 0 40px;
+            border-right: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+
+        .stat:last-child {
+            border-right: none;
+        }
+
+        .stat-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* ── UPLOAD ZONE ── */
+        .upload-card {
+            background: var(--surface);
+            border: 2px dashed var(--border);
+            border-radius: 24px;
+            padding: 8px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.03), rgba(2, 132, 199, 0.03));
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            border-radius: 20px;
+        }
+
+        .upload-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .upload-card.drag-over {
+            border-color: var(--accent);
+            border-style: solid;
+            background: var(--accent-light);
+        }
+
+        .upload-card.drag-over::before {
+            opacity: 1;
+        }
+
+        .drop-zone {
+            border: none;
+            border-radius: 18px;
+            padding: 64px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            background: transparent;
+        }
+
+        .drop-zone:hover {
+            background: rgba(14, 165, 233, 0.02);
+        }
+
+        .drop-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 28px;
+            position: relative;
+        }
+
+        .drop-icon-ring {
+            position: absolute;
+            inset: 0;
+            border: 2px solid var(--accent-light);
+            border-radius: 50%;
+            animation: spin-slow 12s linear infinite;
+        }
+
+        .drop-icon-ring::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .drop-icon-inner {
+            position: absolute;
+            inset: 14px;
+            background: linear-gradient(135deg, var(--accent-light) 0%, rgba(14, 165, 233, 0.05) 100%);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        .drop-icon-inner svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--accent);
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .drop-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+            color: var(--text);
+        }
+
+        .drop-sub {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .format-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-light);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 24px;
+            padding: 8px 18px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent2);
+            letter-spacing: 0.03em;
+            font-weight: 500;
+        }
+
+        .format-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ── FILE PREVIEW ── */
+        .file-preview {
+            display: none;
+            align-items: center;
+            gap: 16px;
+            background: var(--accent-light);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin-top: 16px;
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+
+        .file-preview.visible {
+            display: flex;
+        }
+
+        .file-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .file-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--accent);
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .file-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-meta {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .file-remove {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: grid;
+            place-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .file-remove:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+            transform: scale(1.05);
+        }
+
+        .file-remove svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        /* ── ERROR MESSAGE ── */
+        .error-msg {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 16px;
+            margin-left: 8px;
+            margin-right: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--danger);
+        }
+
+        .error-msg.visible {
+            display: flex;
+        }
+
+        .error-msg svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            flex-shrink: 0;
+        }
+
+        /* ── BUTTON ── */
+        .btn-wrap {
+            display: flex;
+            justify-content: center;
+            margin-top: 32px;
+        }
+
+        .btn-analyse {
+            position: relative;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+            border: none;
+            border-radius: 16px;
+            padding: 20px 64px;
+            font-family: var(--font-head);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.3), var(--shadow-md);
+        }
+
+        .btn-analyse::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-analyse:hover::before {
+            left: 100%;
+        }
+
+        .btn-analyse:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(14, 165, 233, 0.4), var(--shadow-lg);
+        }
+
+        .btn-analyse:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            filter: grayscale(0.3);
+        }
+
+        .btn-analyse:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        /* ── INFO STRIP ── */
+        .info-strip {
+            display: flex;
+            gap: 16px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .info-chip {
+            flex: 1;
+            min-width: 200px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .info-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-light);
+        }
+
+        .info-chip-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .info-chip-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .ic-blue {
+            background: var(--accent-light);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        .ic-blue svg {
+            stroke: var(--accent);
+        }
+
+        .ic-green {
+            background: var(--success-light);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .ic-green svg {
+            stroke: var(--success);
+        }
+
+        .ic-yellow {
+            background: var(--warning-light);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .ic-yellow svg {
+            stroke: var(--warning);
+        }
+
+        .info-chip-text {}
+
+        .info-chip-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .info-chip-desc {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align: center;
+            padding: 48px 24px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.03em;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fade-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero {
+            animation: fade-up 0.6s ease both;
+        }
+
+        .stats {
+            animation: fade-up 0.6s 0.1s ease both;
+        }
+
+        .upload-card {
+            animation: fade-up 0.6s 0.2s ease both;
+        }
+
+        .btn-wrap {
+            animation: fade-up 0.6s 0.3s ease both;
+        }
+
+        .info-strip {
+            animation: fade-up 0.6s 0.4s ease both;
+        }
+
+        /* ── SCAN LINE EFFECT ── */
+        .scan-anim {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            pointer-events: none;
+            transition: none;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .upload-card.drag-over .scan-anim {
+            animation: scan 1.5s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes scan {
+            from {
+                top: 0;
+            }
+
+            to {
+                top: 100%;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .stats {
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .stat {
+                border-right: none;
+                padding: 0 20px;
+            }
+
+            .info-chip {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            SchizoBrain
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-label">CNN + 3D Vision Transformer</div>
+            <h1>Detect <span>Schizophrenia</span><br />from Brain MRI</h1>
+            <p class="hero-sub">Upload your T1-weighted MRI scan (NIfTI) to receive a clear classification result</p>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-val">3D</div>
+                <div class="stat-label">Volume Analysis</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">.nii</div>
+                <div class="stat-label">NIfTI Format</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">CNN+ViT</div>
+                <div class="stat-label">Architecture</div>
+            </div>
+        </div>
+
+        <!-- UPLOAD CARD -->
+        <form class="upload-card" id="uploadCard" action="/analyze" method="post" enctype="multipart/form-data">
+            <div class="scan-anim" id="scanAnim"></div>
+
+            <div class="drop-zone" id="dropZone">
+                <input type="file" id="fileInput" name="file" accept=".nii,.nii.gz" required />
+
+                <div class="drop-icon">
+                    <div class="drop-icon-ring"></div>
+                    <div class="drop-icon-inner">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="drop-title">Drop your NIfTI scan here</div>
+                <div class="drop-sub">
+                    Drag & drop or click to browse<br />
+                    Supported formats only
+                </div>
+                <div class="format-badge">
+                    <span class="format-badge-dot"></span>
+                    .nii &nbsp;·&nbsp; .nii.gz
+                </div>
+            </div>
+
+            <!-- CLINICAL METADATA -->
+            <div class="metadata-row"
+                style="display: flex; gap: 16px; margin: 0 16px 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                <div style="flex: 1;">
+                    <label
+                        style="display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;">Patient
+                        Age</label>
+                    <input type="number" name="age" min="18" max="100" value="35"
+                        style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: var(--font-mono); font-size: 0.9rem; outline: none; transition: border-color 0.2s;"
+                        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+                        required>
+                </div>
+                <div style="flex: 1;">
+                    <label
+                        style="display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;">Gender</label>
+                    <select name="gender"
+                        style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: var(--font-mono); font-size: 0.9rem; outline: none; transition: border-color 0.2s;"
+                        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+                        required>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- file preview -->
+            <div class="file-preview" id="filePreview">
+                <div class="file-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
+                </div>
+                <div class="file-info">
+                    <div class="file-name" id="fileName">—</div>
+                    <div class="file-meta" id="fileMeta">—</div>
+                </div>
+                <button class="file-remove" id="removeBtn" title="Remove">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- error -->
+            <div class="error-msg" id="errorMsg">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span id="errorText">Invalid file format. Only .nii and .nii.gz files are accepted.</span>
+            </div>
+            <!-- BUTTON -->
+            <div class="btn-wrap" style="margin-top: 16px; margin-bottom: 16px;">
+                <button type="submit" class="btn-analyse" id="analyseBtn" disabled>
+                    ⬡ &nbsp; Analyse Scan
+                </button>
+            </div>
+        </form>
+
+        <!-- INFO CHIPS -->
+        <div class="info-strip">
+            <div class="info-chip">
+                <div class="info-chip-icon ic-blue">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" />
+                        <path d="M12 6v6l4 2" />
+                    </svg>
+                </div>
+                <div class="info-chip-text">
+                    <div class="info-chip-title">Processing Time</div>
+                    <div class="info-chip-desc">~15–30 sec for full 3D volume inference</div>
+                </div>
+            </div>
+            <div class="info-chip">
+                <div class="info-chip-icon ic-green">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                </div>
+                <div class="info-chip-text">
+                    <div class="info-chip-title">Data Privacy</div>
+                    <div class="info-chip-desc">Scan processed locally — not stored or transmitted</div>
+                </div>
+            </div>
+            <div class="info-chip">
+                <div class="info-chip-icon ic-yellow">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                </div>
+                <div class="info-chip-text">
+                    <div class="info-chip-title">Research Tool</div>
+                    <div class="info-chip-desc">Not for clinical diagnosis. Research use only.</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        SchizoBrain
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const uploadCard = document.getElementById('uploadCard');
+        const filePreview = document.getElementById('filePreview');
+        const fileName = document.getElementById('fileName');
+        const fileMeta = document.getElementById('fileMeta');
+        const removeBtn = document.getElementById('removeBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const errorText = document.getElementById('errorText');
+        const analyseBtn = document.getElementById('analyseBtn');
+
+        function isValidNifti(file) {
+            const name = file.name.toLowerCase();
+            return name.endsWith('.nii') || name.endsWith('.nii.gz');
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function setFile(file) {
+            errorMsg.classList.remove('visible');
+
+            if (!isValidNifti(file)) {
+                const ext = file.name.split('.').pop().toUpperCase();
+                errorText.textContent = `Invalid format: .${ext} files are not accepted. Please upload a .nii or .nii.gz NIfTI file.`;
+                errorMsg.classList.add('visible');
+                filePreview.classList.remove('visible');
+                analyseBtn.disabled = true;
+                fileInput.value = '';
+                return;
+            }
+
+            fileName.textContent = file.name;
+            fileMeta.textContent = `${formatBytes(file.size)} · NIfTI MRI Volume · Ready for analysis`;
+            filePreview.classList.add('visible');
+            analyseBtn.disabled = false;
+            errorMsg.classList.remove('visible');
+        }
+
+        fileInput.addEventListener('change', e => {
+            if (e.target.files[0]) setFile(e.target.files[0]);
+        });
+
+        removeBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            fileInput.value = '';
+            filePreview.classList.remove('visible');
+            errorMsg.classList.remove('visible');
+            analyseBtn.disabled = true;
+        });
+
+        // Drag & drop
+        ['dragenter', 'dragover'].forEach(ev => {
+            dropZone.addEventListener(ev, e => {
+                e.preventDefault();
+                uploadCard.classList.add('drag-over');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(ev => {
+            dropZone.addEventListener(ev, e => {
+                e.preventDefault();
+                uploadCard.classList.remove('drag-over');
+            });
+        });
+
+        dropZone.addEventListener('drop', e => {
+            const file = e.dataTransfer.files[0];
+            if (file) setFile(file);
+        });
+
+        function goToResults() {
+            window.location.href = 'results.html';
+        }
+    </script>
+</body>
+
+</html>

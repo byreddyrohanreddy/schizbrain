@@ -1,0 +1,16 @@
+{
+  "family": "schizbrainapp",
+  "containerDefinitions": [{
+    "name": "schizbrainapp",
+    "image": "<your-ecr-uri>/schizbrainapp:latest",
+    "memory": 8192,
+    "cpu": 2048,
+    "portMappings": [{"containerPort": 8000}],
+    "essential": true,
+    "resourceRequirements": [
+      {"type": "GPU", "value": "1"}
+    ]
+  }],
+  "requiresCompatibilities": ["EC2"],
+  "networkMode": "bridge"
+}
