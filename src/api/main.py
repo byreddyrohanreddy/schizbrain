@@ -13,8 +13,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, StreamingResponse
 
-from hybrid_model_v2 import SchizoBrain, AgeNormalizer, encode_gender
-from Interpretability import SchizoBrainInterpreter
+from src.model.hybrid import SchizoBrain
+from src.data.transforms import AgeNormalizer, encode_gender
+from src.evaluation.interpret import SchizoBrainInterpreter
 
 
 def skull_strip(volume: np.ndarray) -> np.ndarray:
@@ -60,8 +61,8 @@ def skull_strip(volume: np.ndarray) -> np.ndarray:
 
 # Initialize FastAPI
 app = FastAPI(title="NeuroScan AI Server")
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "static")), name="static")
+templates = Jinja2Templates(directory=os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates"))
 
 # Global dependencies
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
