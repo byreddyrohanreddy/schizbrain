@@ -91,18 +91,3 @@ Navigate to `http://localhost:8000` in your web browser.
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🤝 Citation
-
-If you use SchizBrain in your research, please cite:
-
-```bibtex
-@misc{reddy2026schizbrain,
-  author = {Rohan Reddy Byreddy},
-  title = {SchizBrain: AI-Assisted Schizophrenia Detection from Structural MRI},
-  year = {2026},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/byreddyrohanreddy/schizbrain}}
-}
-```
