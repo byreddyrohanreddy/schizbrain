@@ -26,8 +26,9 @@ from torch.utils.data import DataLoader
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score, f1_score, accuracy_score
 
-from hybrid_model_v2 import SchizoBrain, AgeNormalizer
-from Trainer import MRIDataset
+from src.model.hybrid import SchizoBrain
+from src.data.transforms import AgeNormalizer
+from src.data.dataset import MRIDataset
 
 CHECKPOINT_DIR = "experiments/checkpoints"
 METADATA_PATH  = "data/metadata_pt.csv"
